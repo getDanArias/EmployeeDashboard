@@ -1,0 +1,22 @@
+.employeeTableHeadings {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+  background: #18B7E7;
+  color: #030005;
+}
+
+.employeeTableRow {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+  background: #0C3341;
+  color: white;
+}
+
+.employeeTableCell {
+  flex: 1;
+  padding: 1em;
+}

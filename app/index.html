@@ -16,7 +16,10 @@
 	</head>
 	<body>
 		<div class="container">
-			<h1>User Dashboard</h1>
+			<dashboard-header title="'Corporate Employees'"></dashboard-header>
+			<employee-table></employee-table>
+			<histogram></histogram>
+			<pie-chart></pie-chart>
 		</div>
 
 		<!-- bower:js -->
@@ -27,7 +30,14 @@
 
 		<!-- inject:js -->
 		<script src="dist/main.app.js"></script>
+		<script src="dist/src/core/services/data.service.js"></script>
 		<script src="dist/main.controller.js"></script>
+		<script src="dist/src/core/components/header/dashboard-header.component.js"></script>
+		<script src="dist/src/features/employee-table/employee-table-heading.component.js"></script>
+		<script src="dist/src/features/employee-table/employee-table-row.component.js"></script>
+		<script src="dist/src/features/employee-table/employee-table.component.js"></script>
+		<script src="dist/src/features/histogram/histogram.component.js"></script>
+		<script src="dist/src/features/pie-chart/pie-chart.component.js"></script>
 		<!-- endinject -->
 
 	</body>
