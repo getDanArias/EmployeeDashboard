@@ -1,0 +1,24 @@
+{
+  "name": "dashboard",
+  "description": "",
+  "main": "app.js",
+  "authors": [
+    ""
+  ],
+  "license": "SEE LICENSE IN license.md",
+  "private": true,
+  "dependencies": {
+    "angular": "^1.6.3",
+    "bootstrap": "^3.3.7"
+  },
+  "overrides": {
+    "bootstrap": {
+      "main": [
+        "dist/css/bootstrap.css",
+        "dist/js/bootstrap.js"
+      ]
+    }
+  },
+  "version": "1.0.0",
+  "author": ""
+}
