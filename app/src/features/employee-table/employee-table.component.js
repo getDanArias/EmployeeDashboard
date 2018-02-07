@@ -37,7 +37,6 @@ angular.module("main")
 			self.sortAsc = null;
 
 			self.sortTable = function (heading) {
-				console.log(`Sort Table by ${heading}`);
 
 				switch (heading) {
 					case "Name": {

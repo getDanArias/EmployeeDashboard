@@ -65,6 +65,16 @@ angular.module("main")
 			self.loading = true;
 			self.data = [];
 
+			self.controlBarButtons = [
+				{
+					label: "Add Employee",
+					action: function () {
+						event.stopPropagation();
+						console.log("Thank you for hiring me!");
+					}
+				}
+			];
+
 			self.jobTitlePieChartTitle = "Employees by Job Title";
 			self.jobTitlePieChartData = [];
 
@@ -92,6 +102,13 @@ angular.module("main")
 		template: `
 			<dashboard-header title="'Corporate Employees'"></dashboard-header>
 			<div ng-if="!$ctrl.loading">
+				<control-bar>
+					<control-bar-button 
+						ng-repeat="button in $ctrl.controlBarButtons" 
+						title="button.label" 
+						action="button.action">
+					</control-bar-button>
+				</control-bar>
 				<employee-table employee-data="$ctrl.data"></employee-table>
 				<div class="dashboard-charts">
 					<div class="chart">

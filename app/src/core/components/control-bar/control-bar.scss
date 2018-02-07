@@ -1,0 +1,9 @@
+.control-bar {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  flex-wrap: wrap;
+
+  padding: 1em 0 2em 0;
+}
