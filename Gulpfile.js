@@ -23,7 +23,13 @@ const ngsource = require("ngsource");
 const browserSync = require("browser-sync");
 const reload = browserSync.reload;
 
+const imagemin = require("gulp-imagemin");
+const deleteEmpty = require("delete-empty");
+const uglify = require("gulp-uglify");
+const cleanCSS = require("gulp-clean-css");
+
 const log = require("bootstrap-logs");
+const gutil = require('gulp-util');
 
 /**
  * Fix for warning when running watchers on lib
@@ -37,14 +43,14 @@ require('events').EventEmitter.prototype._maxListeners = 999;
  * @param err Error thown by the pipe / task.
  */
 let errorHandler = function (err) {
-	
+
 	const plugin = err.plugin || "Unknown";
 	const message = err.message || "Unknown Error";
 	const codeFrame = err.codeFrame || null;
-	
+
 	log.danger(`Build Error in ${plugin}`);
 	log.danger(`${message}`);
-	
+
 	if (codeFrame) {
 		log.danger(`${codeFrame}`);
 	}
@@ -55,7 +61,7 @@ let errorHandler = function (err) {
  ******************************************************************************************/
 
 let srcFiles = {
-	
+
 	scss: [
 		"!app/lib/**",
 		"!app/lib",
@@ -77,15 +83,27 @@ let srcFiles = {
 		"!app/dist/**",
 		"app/**/*.js"
 	],
+	images: [
+		"!app/lib",
+		"!app/lib/**",
+		"!app/dist",
+		"!app/dist/**",
+		"!app/favicon",
+		"!app/favicon/**",
+		"app/**/*.png",
+		"app/**/*.jpg",
+		"app/**/*.jpeg",
+		"app/**/*.gif",
+	],
 	injectorAngular: []
-	
+
 };
 
 let destDir = {
-	
+
 	scss: "app/dist",
 	js: "app/dist"
-	
+
 };
 
 /********************************************************************************
@@ -100,45 +118,45 @@ let destDir = {
  * Default task
  */
 gulp.task("default", function() {
-	
+
 	runSequence('init');
-	
+
 });
 
 gulp.task("setSource", function () {
-	
+
 	try {
-		
+
 		ngsource.set({target: "app/dist"}, ["app/dist/**/*.css"]);
-		
+
 	} catch (error) {
-		
+
 		log.danger(error.stack);
-		
+
 	}
-	
+
 });
 
 /**
  * Initialization task
  */
 gulp.task("init", function() {
-	
+
 	const cleaning = [
 		"clean:dist"
 	];
-	
+
 	const watching = [
 		'scss-watch',
 		'html-watch',
 		'js-watch',
-		'lib-watch'
+		'lib-watch',
+		'img-watch'
 	];
-	
-	runSequence(cleaning, 'sass', 'eslint', 'transpile', 'setSource', 'inject', 'inject:lib', watching, "serve");
-	
-});
 
+	runSequence(cleaning, 'sass', 'eslint', 'transpile', 'setSource', 'inject', 'inject:lib', 'imageop', watching, "serve");
+
+});
 
 /********************************************************************************
  Cleaning Tasks
@@ -148,11 +166,11 @@ gulp.task("init", function() {
  * Deletes the dist folder
  */
 gulp.task("clean:dist", function () {
-	
+
 	return del([
 		"app/dist"
 	]);
-	
+
 });
 
 /********************************************************************************
@@ -163,41 +181,65 @@ gulp.task("clean:dist", function () {
  * Compiles .scss to .css
  */
 gulp.task('sass', function() {
-	
+
 	let processors = [
 		autoprefixer
 	];
-	
+
 	return gulp.src(srcFiles.scss)
 		.pipe(sass().on("error", sass.logError))
 		.pipe(postcss(processors))
 		.pipe(concat("main.css"))
 		.pipe(gulp.dest(destDir.scss));
-	
+
 });
 
 /**
  * Transpile ES6 to ES5
  */
 gulp.task("transpile", function () {
-	
+
 	const babelOptions = {
-		
+
 		presets: ["es2015"]
-		
+
 	};
-	
+
 	return gulp.src(srcFiles.js)
 		.pipe(sourcemaps.init())
 		.pipe(babel(babelOptions).on("error", function (err) {
-			
+
 			errorHandler(err);
 			this.emit('end');
-			
+
 		}))
 		.pipe(sourcemaps.write())
 		.pipe(gulp.dest(destDir.js));
-	
+
+});
+
+/**
+ * Optimize images
+ */
+
+gulp.task('imageop', function () {
+
+	runSequence("imageop:helper", "reload:browser", "message:success");
+
+});
+
+gulp.task("imageop:helper", function () {
+
+	return gulp.src(srcFiles.images)
+		.pipe(imagemin())
+		.pipe(gulp.dest("app/dist"));
+
+});
+
+gulp.task("message:success", function () {
+
+	return log.success("Images have been processed.")
+
 });
 
 /********************************************************************************
@@ -208,41 +250,41 @@ gulp.task("transpile", function () {
  * Uses eslint to provide warning about style problems or potential pitfalls
  */
 gulp.task("eslint", function () {
-	
+
 	return gulp.src(srcFiles.js)
 		.pipe(eslint())
 		.pipe(eslint.format());
-	
+
 });
 
 /**
  * Injects .scss files into index.html
  */
 gulp.task('inject', function () {
-	
+
 	let injectOptions = {
 		ignorePath: 'app/',
 		addRootSlash: false,
 		empty: true
 	};
-	
+
 	let injectSrc = gulp.src(ngsource.get(), {read: false});
-	
+
 	return gulp.src('app/index.html')
 		.pipe(injector(injectSrc, injectOptions))
 		.pipe(gulp.dest('app'));
 });
 
 gulp.task('inject:add-remove-file', function () {
-	
+
 	let injectOptions = {
 		ignorePath: 'app/',
 		addRootSlash: false,
 		empty: true
 	};
-	
+
 	let injectSrc = gulp.src(ngsource.refresh(), {read: false});
-	
+
 	return gulp.src('app/index.html')
 		.pipe(injector(injectSrc, injectOptions))
 		.pipe(gulp.dest('app'));
@@ -250,35 +292,43 @@ gulp.task('inject:add-remove-file', function () {
 
 
 gulp.task('inject:lib', function () {
-	
+
 	/**
 	 * devDependencies won't be injected into
 	 */
-	
+
 	let injectOptions = {
 		name: "bower",
 		ignorePath: 'app/',
 		addRootSlash: false,
 		empty: true
 	};
-	
+
 	return gulp.src("app/index.html")
 		.pipe(injector(gulp.src(mainBowerFiles(), {read: false}), injectOptions))
 		.pipe(gulp.dest("app"));
-	
+
 });
 
 /**
  * Serve application using browser-sync
  */
 gulp.task("serve", function () {
-	
+
 	browserSync.init({
+
 		server: {
 			baseDir: "app"
 		}
+
 	})
-	
+
+});
+
+gulp.task("reload:browser", function () {
+
+	reload();
+
 });
 
 /********************************************************************************
@@ -290,67 +340,67 @@ gulp.task("serve", function () {
  * This effort is made to support Safari and Safari Mobile.
  */
 gulp.task("js-watch", function () {
-	
+
 	let watcher = watch(srcFiles.js);
-	
+
 	watcher.on("change", function (filepath) {
-		
+
 		runSequence('eslint', 'transpile', 'inject');
 		// reload();
-		
+
 	});
-	
+
 	watcher.on("add", function (filepath) {
-		
+
 		runSequence('eslint', 'transpile', 'inject:add-remove-file');
-		
+
 	});
-	
+
 	watcher.on('unlink', function (filepath) {
-		
+
 		console.log(filepath + " is deleted. Deleting corresponding .js files from app/dist");
-		
+
 		let fullPath = filepath;
 		let rootToJS = "app/dist/";
 		let fileNameBase = path.basename(filepath, '.js');
 		let pathToJS = "";
 		let fullPathToJS = "";
-		
+
 		let fullPathArray = fullPath.split("/");
 		let index = 0;
-		
+
 		for (let i = 0; i < fullPathArray.length; i++) {
-			
+
 			if (fullPathArray[i] === "app") {
-				
+
 				index = i;
-				
+
 				break;
-				
+
 			}
 		}
-		
+
 		for (let i = index; i < fullPathArray.length - 1; i++) {
-			
+
 			if (i > index && i < fullPathArray.length - 1) {
-				
+
 				pathToJS += fullPathArray[i] + "/";
-				
+
 			}
-			
+
 		}
-		
+
 		fullPathToJS = rootToJS + pathToJS + fileNameBase + ".*";
-		
+
 		del(fullPathToJS)
 			.then(function(paths){
 				console.log("deleted files: " + paths.join('\n'));
 				runSequence('inject:add-remove-file');
 				// reload();
 			});
-		
+
 	});
-	
+
 });
 
 /**
@@ -359,101 +409,191 @@ gulp.task("js-watch", function () {
  */
 
 gulp.task('scss-watch', function(){
-	
+
 	let watcher = watch(srcFiles.scss);
-	
+
 	watcher.on('unlink', function (filepath) {
-		
+
 		console.log(filepath + " is deleted. Deleting corresponding .css files from app/dist");
-		
+
 		let fullPath = filepath;
 		let rootToCSS = "app/dist/";
 		let fileNameBase = path.basename(filepath, '.scss');
 		let pathToCSS = "";
 		let fullPathToCSS = "";
-		
+
 		let fullPathArray = fullPath.split("/");
 		let index = 0;
-		
+
 		for (let i = 0; i < fullPathArray.length; i++) {
-			
+
 			if (fullPathArray[i] === "app") {
-				
+
 				index = i;
-				
+
 				break;
-				
+
 			}
 		}
-		
+
 		for (let i = index; i < fullPathArray.length - 1; i++) {
-			
+
 			if (i > index && i < fullPathArray.length - 1) {
-				
+
 				pathToCSS += fullPathArray[i] + "/";
-				
+
 			}
-			
+
 		}
-		
+
 		fullPathToCSS = rootToCSS + pathToCSS + fileNameBase + ".*";
-		
+
 		del(fullPathToCSS)
 			.then(function(paths){
 				console.log("deleted files: " + paths.join('\n'));
 				runSequence('inject');
 				// reload();
 			});
-		
+
 	});
-	
+
 	watcher.on('add', function (filepath) {
-		
+
 		console.log(filepath + " is added. Adding corresponding .css files to app/dist");
-		
+
 		runSequence('sass', 'inject');
 		// reload();
-		
+
 	});
-	
-	
+
+
 	watcher.on('change', function (filepath) {
-		
+
 		console.log(filepath + " changed. Sassing it and injecting it");
-		
+
 		runSequence('sass', 'inject');
 		// reload();
-		
+
 	});
-	
+
+});
+
+/**
+ * Watch image files for changes.
+ * Perform actions based on the file event: added, deleted, changed.
+ */
+
+gulp.task('img-watch', function(){
+
+	let watcher = watch(srcFiles.images);
+
+	watcher.on('unlink', function (filepath) {
+
+		console.log(filepath + " is deleted. Deleting corresponding image files from app/dist");
+
+		let fullPath = filepath;
+		let rootToImg = "app/dist/";
+		let fileNameBase = path.basename(filepath);
+		let pathToImg = "";
+		let fullPathToImg = "";
+
+		let fullPathArray = fullPath.split("/");
+		let index = 0;
+
+		for (let i = 0; i < fullPathArray.length; i++) {
+
+			if (fullPathArray[i] === "app") {
+
+				index = i;
+
+				break;
+
+			}
+		}
+
+		for (let i = index; i < fullPathArray.length - 1; i++) {
+
+			if (i > index && i < fullPathArray.length - 1) {
+
+				pathToImg += fullPathArray[i] + "/";
+
+			}
+
+		}
+
+		fullPathToImg = rootToImg + pathToImg + fileNameBase;
+
+		del(fullPathToImg)
+			.then(function(paths){
+				console.log("deleted files: " + paths.join('\n'));
+
+			});
+
+	});
+
+	watcher.on('add', function (filepath) {
+
+		console.log(filepath + " is added. Adding corresponding image files to app/dist");
+
+		gulp.task("img-watch:helper:add", function () {
+
+			return gulp.src(filepath)
+				.pipe(imagemin())
+				.pipe(gulp.dest("app/dist"));
+
+		});
+
+		runSequence("img-watch:helper:add", "reload:browser");
+
+	});
+
+
+	watcher.on('change', function (filepath) {
+
+		console.log(filepath + " changed.");
+
+		gulp.task("img-watch:helper:change", function () {
+
+			return gulp.src(filepath)
+				.pipe(imagemin())
+				.pipe(gulp.dest("app/dist"));
+
+		});
+
+		runSequence("img-watch:helper:add", "reload:browser");
+
+	});
+
 });
 
 gulp.task('html-watch', function () {
-	
+
 	let watcher = watch(srcFiles.html);
-	
+
 	watcher.on('change', function (filepath) {
-		
+
 		reload();
-		
+
 	});
-	
+
 	watcher.on('add', function (filepath) {
-		
+
 		reload();
-		
+
 	});
-	
+
 	watcher.on('unlink', function (filepath) {
-		
+
 		reload();
-		
+
 	})
-	
+
 });
 
+
+
 gulp.task("lib-watch", function () {
-	
+
 	let watcher = watch([
 			"bower.json"
 		],
@@ -463,22 +603,22 @@ gulp.task("lib-watch", function () {
 			read: false,
 			awaitWriteFinish: true
 		});
-	
+
 	watcher.on('add', function (filepath) {
-		
+
 		console.log(`lib added: ${filepath}`);
 		runSequence('inject:lib');
-		
+
 	});
-	
+
 	watcher.on('change', function (filepath) {
-		
+
 		console.log(`lib changed: ${filepath}`);
 		runSequence('inject:lib');
-		
+
 	});
-	
-	
+
+
 });
 
 
@@ -491,57 +631,136 @@ gulp.task("lib-watch", function () {
  * Delete the docs folder
  */
 gulp.task("clean:docs", function () {
-	
+
 	return del([
 		"docs"
 	]);
-	
+
 });
 
 /**
  * Copies dist content to docs: all of the compiles .scss and transpiled .js
  */
-gulp.task("copy:dist:docs", function () {
-	
-	return gulp.src([
-			"app/dist/**/*"
-		], {
-			base: "app/dist"
-		})
+gulp.task("copy:dist:docs:js", function () {
+
+	try {
+
+		ngsource.set({
+			target: "app/dist/"
+		}, []);
+
+	} catch (error) {
+
+		log.danger(error.stack);
+		return;
+
+	}
+
+	let files = ngsource.get();
+
+	console.log(files);
+
+	return gulp.src(files, {
+		base: "app/dist"
+	})
+		.pipe(concat("dist.js"))
+		.pipe(uglify())
+		.on('error', function (err) { gutil.log(gutil.colors.red('[Error]'), err.toString()); })
 		.pipe(gulp.dest("./docs"));
-	
+
+});
+
+gulp.task('copy:dist:docs:css', function() {
+
+	return gulp.src("app/dist/**/*.css")
+		.pipe(concat("main.css"))
+		.pipe(cleanCSS({compatibility: "ie8"}))
+		.pipe(gulp.dest("./docs"));
+
+});
+
+gulp.task('copy:dist:docs:images', function() {
+
+	return gulp.src([
+		"app/dist/**/*.png",
+		"app/dist/**/*.jpg",
+		"app/dist/**/*.jpeg",
+		"app/dist/**/*.gif",
+	])
+		.pipe(imagemin())
+		.pipe(gulp.dest("./docs"));
+
+});
+
+gulp.task('copy:dist:docs:favicon', function() {
+
+	return gulp.src([
+		"app/favicon",
+	])
+		.pipe(imagemin())
+		.pipe(gulp.dest("./docs"));
+
 });
 
 /**
  * Copies lib content to docs
  */
 gulp.task("copy:lib:docs", function () {
-	
-	return gulp.src([
-			"app/lib/**/*"
-		], {
-			base: "app"
-		})
+
+	return gulp.src(mainBowerFiles())
+		.pipe(concat("all_vendor.js"))
+		.pipe(uglify())
+		.on('error', function (err) { gutil.log(gutil.colors.red('[Error]'), err.toString()); })
 		.pipe(gulp.dest("./docs"));
-	
+
 });
 
 /**
  * Copies app content to docs: anything that didn't require transformation
  */
 gulp.task("copy:others:docs", function () {
-	
+
 	return gulp.src([
-			"app/**",
-			"!app/dist",
-			"!app/dist/**",
-			"!app/lib",
-			"!app/lib/**",
-			"!app/**/*.js",
-			"!app/**/*.scss"
-		], { base: "app" })
+		"app/**",
+		"!app/dist",
+		"!app/dist/**",
+		"!app/lib",
+		"!app/lib/**",
+		"!app/**/*.js",
+		"!app/**/*.scss"
+	], { base: "app" })
 		.pipe(gulp.dest("docs"))
-	
+
+});
+
+/**
+ * Delete empty folders
+ */
+
+
+gulp.task("delete:folders:empty", function () {
+
+	deleteEmpty.sync("docs/");
+
+});
+
+gulp.task('delete:bower', function () {
+
+	/**
+	 * devDependencies won't be injected into
+	 */
+
+	let injectOptions = {
+		name: "bower",
+		ignorePath: 'docs/',
+		addRootSlash: false,
+		empty: true
+	};
+
+	return gulp.src("docs/index.html")
+		.pipe(injector(gulp.src("", {read: false}), injectOptions))
+		.pipe(gulp.dest("docs"));
+
 });
 
 /**
@@ -549,15 +768,15 @@ gulp.task("copy:others:docs", function () {
  * Injects .scss files into index.html
  */
 gulp.task('inject:docs', function () {
-	
+
 	let injectOptions = {
 		ignorePath: 'docs/',
 		addRootSlash: false,
 		empty: true
 	};
-	
+
 	try {
-		
+
 		ngsource.set({
 			target: "docs",
 			ignore: "docs/lib"
@@ -565,24 +784,24 @@ gulp.task('inject:docs', function () {
 			"!docs/lib/**/*",
 			"docs/**/*.css"
 		]);
-		
+
 	} catch (error) {
-		
+
 		log.danger(error.stack);
 		return;
-		
+
 	}
-	
+
 	let files = ngsource.get();
-	
+
 	files.forEach(function (source, index) {
-		
+
 		files[index] = source.replace("app/dist/", "docs/");
-		
+
 	});
-	
+
 	let injectSrc = gulp.src(files, {read: false});
-	
+
 	return gulp.src('docs/index.html')
 		.pipe(injector(injectSrc, injectOptions))
 		.pipe(gulp.dest('docs'));
@@ -592,7 +811,7 @@ gulp.task('inject:docs', function () {
  * Builds docs folder needed for Github Pages deployment
  */
 gulp.task("build:docs", function () {
-	
-	runSequence("clean:docs", "copy:dist:docs", "copy:others:docs", "copy:lib:docs", "inject:docs");
-	
+
+	runSequence("clean:docs", "copy:dist:docs:js", "copy:dist:docs:css", "copy:dist:docs:images", "copy:dist:docs:favicon", "copy:others:docs", "copy:lib:docs", "delete:folders:empty", "delete:bower", "inject:docs");
+
 });
