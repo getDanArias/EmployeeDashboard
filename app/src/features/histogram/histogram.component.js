@@ -4,7 +4,8 @@ angular.module("main")
 	.component("histogram", {
 		bindings: {
 			title: "<",
-			barData: "<"
+			barData: "<",
+			seriesTitle: "<"
 		},
 		replace: true,
 		controller: function ($scope, $element) {
@@ -37,7 +38,7 @@ angular.module("main")
 						}
 					},
 					series: [{
-						name: "Gender",
+						name: self.seriesTitle,
 						data: self.barData.map(dataEntry => dataEntry.y)
 					}]
 				});

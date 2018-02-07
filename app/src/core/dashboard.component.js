@@ -76,9 +76,11 @@ angular.module("main")
 			];
 
 			self.jobTitlePieChartTitle = "Employees by Job Title";
+			self.jobTitlePieChartSeriesTitle = "Job Title";
 			self.jobTitlePieChartData = [];
 
 			self.genderBarChartTitle = "Employees by Gender";
+			self.genderBarChartSeriesTitle = "Gender";
 			self.genderBarChartData = [];
 
 			this.$onInit = function () {
@@ -114,12 +116,14 @@ angular.module("main")
 					<div class="chart">
 						<pie-chart 
 							title="$ctrl.jobTitlePieChartTitle" 
+							series-title="$ctrl.jobTitlePieChartSeriesTitle"
 							pie-data="$ctrl.jobTitlePieChartData">
 						</pie-chart>
 					</div>
 					<div class="chart">
 						<histogram 
 							title="$ctrl.genderBarChartTitle"
+							series-title="$ctrl.genderBarChartSeriesTitle"
 							bar-data="$ctrl.genderBarChartData">
 						</histogram>
 					</div>

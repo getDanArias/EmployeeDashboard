@@ -4,7 +4,8 @@ angular.module("main")
 	.component("pieChart", {
 		bindings: {
 			title: "<",
-			pieData: "<"
+			pieData: "<",
+			seriesTitle: "<"
 		},
 		replace: true,
 		controller: function ($scope, $element) {
@@ -31,6 +32,7 @@ angular.module("main")
 						}
 					},
 					series: [{
+						name: self.seriesTitle,
 						data: self.pieData
 					}]
 				});
