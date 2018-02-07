@@ -1,22 +1,68 @@
-.employeeTableHeadings {
+@import "../../../theme";
+
+@mixin flex-row() {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+}
 
-  background: #18B7E7;
-  color: #030005;
+.employeeTable {
+  font-family: $core_font;
+}
+
+.employeeTableHeadings {
+  @include flex-row();
+
+  background: $accent_blue;
+  color: $deep_blue;
+  font-weight: bolder;
+  letter-spacing: 1px;
+}
+
+.sort-arrows {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+
+  font-size: 1.3em;
+
+  cursor: pointer;
 }
 
 .employeeTableRow {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+  @include flex-row();
 
-  background: #0C3341;
   color: white;
+}
+
+.oddRow {
+  background: $core_blue;
+}
+
+.evenRow {
+  background: $core_blue_contrast;
 }
 
 .employeeTableCell {
   flex: 1;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+
   padding: 1em;
+}
+
+@media only screen
+and (max-width: 480px) {
+  .employeeTableCell {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 1em;
+  }
 }

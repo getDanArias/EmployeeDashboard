@@ -2,22 +2,11 @@
 
 angular.module("main")
 	.component("employeeTable", {
-		controller: function ($scope, DataService) {
-			console.log("Calling DataService");
+		bindings: {
+			employeeData: "<"
+		},
+		controller: function () {
 			let self = this;
-
-			self.data = [];
-
-			DataService.getData()
-				.then(function (data) {
-					$scope.$apply(function () {
-						self.data = data;
-						console.log(self.data);
-					});
-				})
-				.catch(function (error) {
-					console.error(error);
-				});
 
 			self.nameSortToggleAsc = false;
 			self.jobTitleSortToggleAsc = false;
@@ -44,28 +33,39 @@ angular.module("main")
 				};
 			};
 
+			self.sortedColumn = "";
+			self.sortAsc = null;
+
 			self.sortTable = function (heading) {
 				console.log(`Sort Table by ${heading}`);
 
 				switch (heading) {
 					case "Name": {
-						self.data = self.data.sort(self.sortBy("name", self.nameSortToggle));
-						self.nameSortToggle = !self.nameSortToggle;
+						self.employeeData = self.employeeData.sort(self.sortBy("name", self.nameSortToggleAsc));
+						self.nameSortToggleAsc = !self.nameSortToggleAsc;
+						self.sortedColumn = heading;
+						self.sortAsc = self.nameSortToggleAsc;
 						break;
 					}
 					case "Job Title": {
-						self.data = self.data.sort(self.sortBy("jobTitle", self.jobTitleSortToggleAsc));
+						self.employeeData = self.employeeData.sort(self.sortBy("jobTitle", self.jobTitleSortToggleAsc));
 						self.jobTitleSortToggleAsc = !self.jobTitleSortToggleAsc;
+						self.sortedColumn = heading;
+						self.sortAsc = self.jobTitleSortToggleAsc;
 						break;
 					}
 					case "Tenure": {
-						self.data = self.data.sort(self.sortByNum("tenure", self.tenureSortToggleAsc));
+						self.employeeData = self.employeeData.sort(self.sortByNum("tenure", self.tenureSortToggleAsc));
 						self.tenureSortToggleAsc = !self.tenureSortToggleAsc;
+						self.sortedColumn = heading;
+						self.sortAsc = self.tenureSortToggleAsc;
 						break;
 					}
 					case "Gender": {
-						self.data = self.data.sort(self.sortBy("gender", self.genderSortToggleAsc));
+						self.employeeData = self.employeeData.sort(self.sortBy("gender", self.genderSortToggleAsc));
 						self.genderSortToggleAsc = !self.genderSortToggleAsc;
+						self.sortedColumn = heading;
+						self.sortAsc = self.genderSortToggleAsc;
 						break;
 					}
 					default:
@@ -74,11 +74,19 @@ angular.module("main")
 			}
 		},
 		template: `
-			<div>
-				Employee Table
-				<employee-table-headings sort-table="$ctrl.sortTable"></employee-table-headings>
-				<employee-table-row employee-data="employee" ng-repeat="employee in $ctrl.data">
-				</employee-table-row>
+			<div class="employeeTable">
+				<employee-table-headings
+					sorted-column="$ctrl.sortedColumn"
+					sort-order="$ctrl.sortAsc" 
+					sort-table="$ctrl.sortTable">
+				</employee-table-headings>
+				<div 
+					ng-repeat="employee in $ctrl.employeeData" 
+					ng-class-odd="'oddRow'" 
+					ng-class-even="'evenRow'">
+					<employee-table-row employee-row-data="employee">
+					</employee-table-row>
+				</div>
 			</div>
 		`
 	});

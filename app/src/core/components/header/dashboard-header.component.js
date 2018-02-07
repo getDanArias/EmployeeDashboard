@@ -1,14 +1,12 @@
 "use strict";
 
-console.log("is this working?");
-
 angular.module("main")
 	.component("dashboardHeader", {
 		bindings: {
 			title: "<"
 		},
 		template: `
-			<div>
+			<div class="dashboard-header">
 				{{ $ctrl.title }}
 			</div>
 		`

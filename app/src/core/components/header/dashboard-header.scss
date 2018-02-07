@@ -1,0 +1,10 @@
+@import "../../../../theme";
+
+.dashboard-header {
+  font-size: 2em;
+  padding: 1em 0;
+
+  font-family: $lead_font;
+  color: $deep_gray;
+  letter-spacing: 2px;
+}

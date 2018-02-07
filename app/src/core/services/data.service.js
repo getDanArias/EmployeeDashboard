@@ -5,11 +5,9 @@ function DataService($http) {
 	self.employeeData = [];
 
 	self.fetchData = function fetchData () {
-		console.log(`DataService.getData`);
 		return new Promise((resolve, reject) => {
 			$http.get('new_hire.json')
 				.then(function (data) {
-					console.log("First then!");
 					self.employeeData = data;
 					resolve();
 				})
@@ -25,7 +23,6 @@ function DataService($http) {
 		return new Promise((resolve, reject) => {
 			self.fetchData()
 				.then(function () {
-					console.log("Second then!");
 					resolve(self.employeeData.data);
 				})
 				.catch(function (error) {
