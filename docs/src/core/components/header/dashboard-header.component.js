@@ -1,0 +1,7 @@
+"use strict";
+
+angular.module("main").component("dashboardHeader", {
+	bindings: { title: "<" },
+	template: "\n\t\t\t<div class=\"dashboard-header\">\n\t\t\t\t{{ $ctrl.title }}\n\t\t\t</div>\n\t\t"
+});
+//# sourceMappingURL=data:application/json;charset=utf8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9jb3JlL2NvbXBvbmVudHMvaGVhZGVyL2Rhc2hib2FyZC1oZWFkZXIuY29tcG9uZW50LmpzIl0sIm5hbWVzIjpbImFuZ3VsYXIiLCJtb2R1bGUiLCJjb21wb25lbnQiLCJiaW5kaW5ncyIsInRpdGxlIiwidGVtcGxhdGUiXSwibWFwcGluZ3MiOiJBQUFBOztBQUVBQSxRQUFRQyxNQUFSLENBQWUsTUFBZixFQUNFQyxTQURGLENBQ1ksaUJBRFosRUFDK0I7QUFDN0JDLFdBQVUsRUFBQ0MsT0FBTyxHQUFSLEVBRG1CO0FBRTdCQztBQUY2QixDQUQvQiIsImZpbGUiOiJzcmMvY29yZS9jb21wb25lbnRzL2hlYWRlci9kYXNoYm9hcmQtaGVhZGVyLmNvbXBvbmVudC5qcyIsInNvdXJjZXNDb250ZW50IjpbIlwidXNlIHN0cmljdFwiO1xuXG5hbmd1bGFyLm1vZHVsZShcIm1haW5cIilcblx0LmNvbXBvbmVudChcImRhc2hib2FyZEhlYWRlclwiLCB7XG5cdFx0YmluZGluZ3M6IHt0aXRsZTogXCI8XCJ9LFxuXHRcdHRlbXBsYXRlOiBgXG5cdFx0XHQ8ZGl2IGNsYXNzPVwiZGFzaGJvYXJkLWhlYWRlclwiPlxuXHRcdFx0XHR7eyAkY3RybC50aXRsZSB9fVxuXHRcdFx0PC9kaXY+XG5cdFx0YFxuXHR9KTtcbiJdfQ==

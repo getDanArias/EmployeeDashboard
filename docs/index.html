@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="main">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Employee Dashboard</title>
+		<link rel="shortcut icon" type="image/png" href="favicon.ico"/>
+
+		<!-- bower:css -->
+		<link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.css">
+		<!-- endinject -->
+
+		<!-- inject:css -->
+		<link rel="stylesheet" href="main.css">
+		<!-- endinject -->
+
+		<link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
+		<script src="https://code.highcharts.com/highcharts.js"></script>
+
+	</head>
+	<body>
+		<div class="container">
+			<dashboard></dashboard>
+		</div>
+
+		<!-- bower:js -->
+		<script src="lib/angular/angular.js"></script>
+		<script src="lib/jquery/dist/jquery.js"></script>
+		<script src="lib/bootstrap/dist/js/bootstrap.js"></script>
+		<!-- endinject -->
+
+		<!-- inject:js -->
+		<script src="main.app.js"></script>
+		<script src="src/core/services/data.service.js"></script>
+		<script src="main.controller.js"></script>
+		<script src="src/core/components/control-bar-button/control-bar-button.component.js"></script>
+		<script src="src/core/components/control-bar/control-bar.component.js"></script>
+		<script src="src/core/components/header/dashboard-header.component.js"></script>
+		<script src="src/core/dashboard.component.js"></script>
+		<script src="src/features/employee-table/employee-table-heading.component.js"></script>
+		<script src="src/features/employee-table/employee-table-row.component.js"></script>
+		<script src="src/features/employee-table/employee-table.component.js"></script>
+		<script src="src/features/histogram/histogram.component.js"></script>
+		<script src="src/features/pie-chart/pie-chart.component.js"></script>
+		<!-- endinject -->
+
+	</body>
+</html>
