@@ -129,6 +129,13 @@ angular.module("main")
 
 			};
 
+			self.$onChanges = function () {
+
+				self.sortedColumn = "";
+				self.sortAsc = null;
+				
+			};
+
 		},
 		template: `
 			<div class="employeeTable">
