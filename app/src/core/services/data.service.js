@@ -51,5 +51,7 @@ const DataService = function DataService ($http) {
 
 };
 
+DataService.$inject = ["$http"];
+
 angular.module("main")
 	.service("DataService", DataService);

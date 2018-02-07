@@ -28,6 +28,28 @@ const createPieChart = function (container, title, pieData, seriesTitle) {
 
 };
 
+const PieChartController = function PieChartController ($scope, $element) {
+
+	const self = this;
+
+	const container = $element.children()[0];
+
+	self.$onInit = function () {
+
+		createPieChart(container, self.title, self.pieData, self.seriesTitle);
+
+	};
+
+	self.$onChanges = function () {
+
+		createPieChart(container, self.title, self.pieData, self.seriesTitle);
+
+	};
+
+};
+
+PieChartController.$inject = ["$scope", "$element"];
+
 angular.module("main")
 	.component("pieChart", {
 		bindings: {
@@ -36,25 +58,7 @@ angular.module("main")
 			seriesTitle: "<"
 		},
 		replace: true,
-		controller ($scope, $element) {
-
-			const self = this;
-
-			const container = $element.children()[0];
-
-			self.$onInit = function () {
-
-				createPieChart(container, self.title, self.pieData, self.seriesTitle);
-
-			};
-
-			self.$onChanges = function () {
-
-				createPieChart(container, self.title, self.pieData, self.seriesTitle);
-
-			};
-
-		},
+		controller: PieChartController,
 		template: `
 			<div class="pie-chart-container">
 				Pie Chart

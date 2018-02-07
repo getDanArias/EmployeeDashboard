@@ -64,72 +64,76 @@ const getPieData = function (dataMap) {
 
 };
 
+const DashboardController = function DashboardController ($scope, DataService) {
+
+	const self = this;
+
+	self.loading = true;
+	self.data = [];
+
+	self.controlBarButtons = [
+		{
+			label: "Add Employee",
+			action () {
+
+				event.stopPropagation();
+				console.log("Thank you for hiring me!");
+
+				self.data.push({
+					name: "Dan Arias",
+					jobTitle: "Front-End Developer",
+					tenure: "1",
+					gender: "Male"
+				});
+
+				self.jobTitlePieChartData = getPieData(getJobTitleCountData(self.data));
+				self.genderBarChartData = getPieData(getGenderCountData(self.data));
+
+			}
+
+		}
+	];
+
+	self.jobTitlePieChartTitle = "Employees by Job Title";
+	self.jobTitlePieChartSeriesTitle = "Job Title";
+	self.jobTitlePieChartData = [];
+
+	self.genderBarChartTitle = "Employees by Gender";
+	self.genderBarChartSeriesTitle = "Gender";
+	self.genderBarChartData = [];
+
+	this.$onInit = function () {
+
+		DataService.getData()
+			.then(function (data) {
+
+				self.data = data;
+
+				$scope.$apply(function () {
+
+					self.loading = false;
+
+					self.jobTitlePieChartData = getPieData(getJobTitleCountData(self.data));
+					self.genderBarChartData = getPieData(getGenderCountData(self.data));
+
+				});
+
+			})
+			.catch(function (error) {
+
+				console.error(error);
+
+			});
+
+	};
+
+};
+
+DashboardController.$inject = ["$scope", "DataService"];
+
 angular.module("main")
 	.component("dashboard", {
-		controller ($scope, DataService) {
-
-			const self = this;
-
-			self.loading = true;
-			self.data = [];
-
-			self.controlBarButtons = [
-				{
-					label: "Add Employee",
-					action () {
-
-						event.stopPropagation();
-						console.log("Thank you for hiring me!");
-
-						self.data.push({
-							name: "Dan Arias",
-							jobTitle: "Front-End Developer",
-							tenure: "1",
-							gender: "Male"
-						});
-
-						self.jobTitlePieChartData = getPieData(getJobTitleCountData(self.data));
-						self.genderBarChartData = getPieData(getGenderCountData(self.data));
-
-					}
-
-				}
-			];
-
-			self.jobTitlePieChartTitle = "Employees by Job Title";
-			self.jobTitlePieChartSeriesTitle = "Job Title";
-			self.jobTitlePieChartData = [];
-
-			self.genderBarChartTitle = "Employees by Gender";
-			self.genderBarChartSeriesTitle = "Gender";
-			self.genderBarChartData = [];
-
-			this.$onInit = function () {
-
-				DataService.getData()
-					.then(function (data) {
-
-						self.data = data;
-
-						$scope.$apply(function () {
-
-							self.loading = false;
-
-							self.jobTitlePieChartData = getPieData(getJobTitleCountData(self.data));
-							self.genderBarChartData = getPieData(getGenderCountData(self.data));
-
-						});
-
-					})
-					.catch(function (error) {
-
-						console.error(error);
-
-					});
-
-			};
-
-		},
+		controller: DashboardController,
 		template: `
 			<dashboard-header title="'Corporate Employees'"></dashboard-header>
 			<div ng-if="!$ctrl.loading">

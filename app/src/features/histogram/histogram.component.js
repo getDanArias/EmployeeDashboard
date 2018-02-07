@@ -38,6 +38,28 @@ const createBarChart = function (container, title, barData, seriesTitle) {
 
 };
 
+const HistogramController = function HistogramController ($scope, $element) {
+
+	const self = this;
+
+	const container = $element.children()[0];
+
+	self.$onInit = function () {
+
+		createBarChart(container, self.title, self.barData, self.seriesTitle);
+
+	};
+
+	self.$onChanges = function () {
+
+		createBarChart(container, self.title, self.barData, self.seriesTitle);
+
+	};
+
+};
+
+HistogramController.$inject = ["$scope", "$element"];
+
 angular.module("main")
 	.component("histogram", {
 		bindings: {
@@ -46,25 +68,7 @@ angular.module("main")
 			seriesTitle: "<"
 		},
 		replace: true,
-		controller ($scope, $element) {
-
-			const self = this;
-
-			const container = $element.children()[0];
-
-			self.$onInit = function () {
-
-				createBarChart(container, self.title, self.barData, self.seriesTitle);
-
-			};
-
-			self.$onChanges = function () {
-
-				createBarChart(container, self.title, self.barData, self.seriesTitle);
-
-			};
-
-		},
+		controller: HistogramController,
 		template: `
 			<div class="bar-chart-container">
 				Bar Chart
