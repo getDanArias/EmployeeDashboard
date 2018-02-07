@@ -1,6 +1,6 @@
 ## Corporate Employee Dashboard
 
-[Live Demo](https://getdanarias.github.io/EmployeeDashboard-AngularJS/)
+[Live Demo](https://getdanarias.github.io/EmployeeDashboard-AngularJS/) Engineered to work well on Mobile and Desktop. 
 
 ### Install
 
