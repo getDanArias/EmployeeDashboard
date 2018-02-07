@@ -2,9 +2,7 @@
 
 angular.module("main")
 	.component("employeeTableRow", {
-		bindings: {
-			employeeRowData: "<",
-		},
+		bindings: {employeeRowData: "<"},
 		transclude: true,
 		template: `
 			<ng-transclude>

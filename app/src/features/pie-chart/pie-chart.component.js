@@ -1,29 +1,32 @@
 "use strict";
 
-function createPieChart(container, title, pieData, seriesTitle) {
+/* global Highcharts */
+
+const createPieChart = function (container, title, pieData, seriesTitle) {
+
 	Highcharts.chart(container, {
-		chart: {
-			type: 'pie'
-		},
-		title: {
-			text: title
-		},
+
+		chart: {type: "pie"},
+		title: {text: title},
 		plotOptions: {
+
 			pie: {
 				allowPointSelect: true,
-				cursor: 'pointer',
+				cursor: "pointer",
 				dataLabels: {
 					enabled: true,
-					format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+					format: "<b>{point.name}</b>: {point.percentage:.1f} %"
 				}
 			}
+
 		},
 		series: [{
 			name: seriesTitle,
 			data: pieData
 		}]
 	});
-}
+
+};
 
 angular.module("main")
 	.component("pieChart", {
@@ -33,18 +36,24 @@ angular.module("main")
 			seriesTitle: "<"
 		},
 		replace: true,
-		controller: function ($scope, $element) {
-			let self = this;
+		controller ($scope, $element) {
 
-			let container = $element.children()[0];
+			const self = this;
+
+			const container = $element.children()[0];
 
 			self.$onInit = function () {
+
 				createPieChart(container, self.title, self.pieData, self.seriesTitle);
+
 			};
 
 			self.$onChanges = function () {
+
 				createPieChart(container, self.title, self.pieData, self.seriesTitle);
-			}
+
+			};
+
 		},
 		template: `
 			<div class="pie-chart-container">

@@ -2,9 +2,7 @@
 
 angular.module("main")
 	.component("dashboardHeader", {
-		bindings: {
-			title: "<"
-		},
+		bindings: {title: "<"},
 		template: `
 			<div class="dashboard-header">
 				{{ $ctrl.title }}

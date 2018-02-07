@@ -1,7 +1,7 @@
 "use strict";
 
 angular.module("main")
-	.component('controlBar', {
+	.component("controlBar", {
 		transclude: true,
 		template: `
 			<div class="control-bar">

@@ -7,8 +7,9 @@ angular.module("main")
 			sortedColumn: "<",
 			sortOrder: "<"
 		},
-		controller: function () {
-			let self = this;
+		controller () {
+
+			const self = this;
 
 			self.headings = [
 				"Name",
@@ -20,10 +21,11 @@ angular.module("main")
 			self.sortClasses = {
 				none: ["fas", "fa-sort"],
 				asc: ["fas", "fa-sort-up"],
-				desc: ["fas", "fa-sort-down"],
+				desc: ["fas", "fa-sort-down"]
 			};
 
 			self.sortClass = self.sortClasses.none;
+
 		},
 		template: `
 			<div class="employeeTableHeadings">

@@ -1,66 +1,74 @@
 "use strict";
 
-function getJobTitleCountData(data) {
-	let jobTitlesSet = new Set();
-	let jobTitlesCountMap = new Map();
+/* eslint id-length: "off" */
+
+const getJobTitleCountData = function (data) {
+
+	const jobTitlesSet = new Set();
+	const jobTitlesCountMap = new Map();
 
 	// Get unique Job Titles in a Set.
-	data.map(dataElement => {
-		jobTitlesSet.add(dataElement.jobTitle);
-	});
+	data.map((dataElement) => jobTitlesSet.add(dataElement.jobTitle));
 
 	// Create map of Job Titles to keep count.
-	for (let jobTitle of jobTitlesSet) {
+	for (const jobTitle of jobTitlesSet) {
+
 		jobTitlesCountMap.set(jobTitle, 0);
+
 	}
 
 	// Count Job Titles in Data.
-	data.map(dataElement => {
-		jobTitlesCountMap.set(dataElement.jobTitle, jobTitlesCountMap.get(dataElement.jobTitle) + 1);
-	});
+	data.map((dataElement) => jobTitlesCountMap.set(dataElement.jobTitle, jobTitlesCountMap.get(dataElement.jobTitle) + 1));
 
 	return jobTitlesCountMap;
-}
 
-function getGenderCountData(data) {
-	let genderSet = new Set();
-	let genderCountMap = new Map();
+};
+
+const getGenderCountData = function (data) {
+
+	const genderSet = new Set();
+	const genderCountMap = new Map();
 
 	// Get unique Job Titles in a Set.
-	data.map(dataElement => {
-		genderSet.add(dataElement.gender);
-	});
+	data.map((dataElement) => genderSet.add(dataElement.gender));
 
 	// Create map of Job Titles to keep count.
-	for (let gender of genderSet) {
+	for (const gender of genderSet) {
+
 		genderCountMap.set(gender, 0);
+
 	}
 
 	// Count Job Titles in Data.
-	data.map(dataElement => {
-		genderCountMap.set(dataElement.gender, genderCountMap.get(dataElement.gender) + 1);
-	});
+	data.map((dataElement) =>
+		genderCountMap.set(dataElement.gender, genderCountMap.get(dataElement.gender) + 1));
 
 	return genderCountMap;
-}
 
-function getPieData(dataMap) {
-	let pieChartData = [];
+};
 
-	for (let dataEntry of dataMap) {
+const getPieData = function (dataMap) {
+
+	const pieChartData = [];
+
+	for (const dataEntry of dataMap) {
+
 		pieChartData.push({
 			name: dataEntry[0],
 			y: dataEntry[1]
-		})
+		});
+
 	}
 
 	return pieChartData;
-}
+
+};
 
 angular.module("main")
 	.component("dashboard", {
-		controller: function ($scope, DataService) {
-			let self = this;
+		controller ($scope, DataService) {
+
+			const self = this;
 
 			self.loading = true;
 			self.data = [];
@@ -68,20 +76,23 @@ angular.module("main")
 			self.controlBarButtons = [
 				{
 					label: "Add Employee",
-					action: function () {
+					action () {
+
 						event.stopPropagation();
 						console.log("Thank you for hiring me!");
 
 						self.data.push({
-							"name": "Dan Arias",
-							"jobTitle": "Front-End Developer",
-							"tenure": "1",
-							"gender": "Male"
+							name: "Dan Arias",
+							jobTitle: "Front-End Developer",
+							tenure: "1",
+							gender: "Male"
 						});
 
 						self.jobTitlePieChartData = getPieData(getJobTitleCountData(self.data));
 						self.genderBarChartData = getPieData(getGenderCountData(self.data));
+
 					}
+
 				}
 			];
 
@@ -94,22 +105,30 @@ angular.module("main")
 			self.genderBarChartData = [];
 
 			this.$onInit = function () {
+
 				DataService.getData()
 					.then(function (data) {
+
 						self.data = data;
 
 						$scope.$apply(function () {
+
 							self.loading = false;
 
 							self.jobTitlePieChartData = getPieData(getJobTitleCountData(self.data));
 							self.genderBarChartData = getPieData(getGenderCountData(self.data));
 
 						});
+
 					})
 					.catch(function (error) {
+
 						console.error(error);
+
 					});
-			}
+
+			};
+
 		},
 		template: `
 			<dashboard-header title="'Corporate Employees'"></dashboard-header>
