@@ -133,7 +133,12 @@ angular.module("main")
 
 				self.sortedColumn = "";
 				self.sortAsc = null;
-				
+
+				self.nameSortToggleAsc = false;
+				self.jobTitleSortToggleAsc = false;
+				self.tenureSortToggleAsc = false;
+				self.genderSortToggleAsc = false;
+
 			};
 
 		},
