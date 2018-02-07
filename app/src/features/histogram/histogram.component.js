@@ -14,7 +14,7 @@ function createBarChart(container, title, barData, seriesTitle) {
 		yAxis: {
 			title: null,
 			allowDecimals: false,
-			minorTickInterval: 1,
+			minorTickInterval: 1
 		},
 		plotOptions: {
 			pie: {
