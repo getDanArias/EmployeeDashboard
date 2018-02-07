@@ -79,12 +79,15 @@ const DashboardController = function DashboardController ($scope, DataService) {
 				event.stopPropagation();
 				console.log("Thank you for hiring me!");
 
-				self.data.push({
-					name: "Dan Arias",
-					jobTitle: "Front-End Developer",
-					tenure: "1",
-					gender: "Male"
-				});
+				self.data = [
+					{
+						name: "Dan Arias",
+						jobTitle: "Front-End Developer",
+						tenure: "1",
+						gender: "Male"
+					},
+					...self.data
+				];
 
 				self.jobTitlePieChartData = getPieData(getJobTitleCountData(self.data));
 				self.genderBarChartData = getPieData(getGenderCountData(self.data));
