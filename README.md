@@ -1,5 +1,7 @@
 ## Corporate Employee Dashboard
 
+[Live Demo](https://getdanarias.github.io/EmployeeDashboard-AngularJS/)
+
 ### Install
 
 Install and run the project by running:
