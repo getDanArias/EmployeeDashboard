@@ -1,5 +1,38 @@
 "use strict";
 
+function createBarChart(container, title, barData, seriesTitle) {
+	Highcharts.chart(container, {
+		chart: {
+			type: 'column'
+		},
+		title: {
+			text: title
+		},
+		xAxis: {
+			categories: barData.map(dataEntry => dataEntry.name)
+		},
+		yAxis: {
+			title: null,
+			allowDecimals: false,
+			minorTickInterval: 1,
+		},
+		plotOptions: {
+			pie: {
+				allowPointSelect: true,
+				cursor: 'pointer',
+				dataLabels: {
+					enabled: true,
+					format: '<b>{point.name}</b>: {point.percentage:.1f} %'
+				}
+			}
+		},
+		series: [{
+			name: seriesTitle,
+			data: barData.map(dataEntry => dataEntry.y)
+		}]
+	});
+}
+
 angular.module("main")
 	.component("histogram", {
 		bindings: {
@@ -14,35 +47,12 @@ angular.module("main")
 			let container = $element.children()[0];
 
 			self.$onInit = function () {
-				Highcharts.chart(container, {
-					chart: {
-						type: 'column'
-					},
-					title: {
-						text: self.title
-					},
-					xAxis: {
-						categories: self.barData.map(dataEntry => dataEntry.name)
-					},
-					yAxis: {
-						title: null
-					},
-					plotOptions: {
-						pie: {
-							allowPointSelect: true,
-							cursor: 'pointer',
-							dataLabels: {
-								enabled: true,
-								format: '<b>{point.name}</b>: {point.percentage:.1f} %'
-							}
-						}
-					},
-					series: [{
-						name: self.seriesTitle,
-						data: self.barData.map(dataEntry => dataEntry.y)
-					}]
-				});
-			}
+				createBarChart(container, self.title, self.barData, self.seriesTitle);
+			};
+
+			self.$onChanges = function () {
+				createBarChart(container, self.title, self.barData, self.seriesTitle);
+			};
 		},
 		template: `
 			<div class="bar-chart-container">

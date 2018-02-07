@@ -71,6 +71,16 @@ angular.module("main")
 					action: function () {
 						event.stopPropagation();
 						console.log("Thank you for hiring me!");
+
+						self.data.push({
+							"name": "Dan Arias",
+							"jobTitle": "Front-End Developer",
+							"tenure": "1",
+							"gender": "Male"
+						});
+
+						self.jobTitlePieChartData = getPieData(getJobTitleCountData(self.data));
+						self.genderBarChartData = getPieData(getGenderCountData(self.data));
 					}
 				}
 			];
