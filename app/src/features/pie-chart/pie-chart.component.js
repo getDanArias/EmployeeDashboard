@@ -51,7 +51,6 @@ angular.module("main")
 			pieData: "<",
 			seriesTitle: "<"
 		},
-		replace: true,
 		controller: PieChartController,
 		template: `
 			<div class="pie-chart-container">

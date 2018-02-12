@@ -61,7 +61,6 @@ angular.module("main")
 			barData: "<",
 			seriesTitle: "<"
 		},
-		replace: true,
 		controller: HistogramController,
 		template: `
 			<div class="bar-chart-container">
