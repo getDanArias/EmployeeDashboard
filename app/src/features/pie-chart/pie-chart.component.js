@@ -34,12 +34,6 @@ const PieChartController = function PieChartController ($scope, $element) {
 
 	const container = $element.children()[0];
 
-	self.$onInit = function () {
-
-		createPieChart(container, self.title, self.pieData, self.seriesTitle);
-
-	};
-
 	self.$onChanges = function () {
 
 		createPieChart(container, self.title, self.pieData, self.seriesTitle);
