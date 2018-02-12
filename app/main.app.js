@@ -2,8 +2,8 @@
 
 angular
 	.module("main", [])
-	.config(function ($compileProvider) {
+	.config(["$compileProvider", function ($compileProvider) {
 
 		$compileProvider.debugInfoEnabled(false);
 
-	});
+	}]);
