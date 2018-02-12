@@ -5,7 +5,7 @@ angular.module("main")
 		bindings: {title: "<"},
 		template: `
 			<div class="dashboard-header">
-				{{ $ctrl.title }}
+				{{ ::$ctrl.title }}
 			</div>
 		`
 	});
