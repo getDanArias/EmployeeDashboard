@@ -1,3 +1,9 @@
 "use strict";
 
-angular.module("main", []);
+angular
+	.module("main", [])
+	.config(function ($compileProvider) {
+
+		$compileProvider.debugInfoEnabled(false);
+
+	});
