@@ -44,12 +44,6 @@ const HistogramController = function HistogramController ($scope, $element) {
 
 	const container = $element.children()[0];
 
-	self.$onInit = function () {
-
-		createBarChart(container, self.title, self.barData, self.seriesTitle);
-
-	};
-
 	self.$onChanges = function () {
 
 		createBarChart(container, self.title, self.barData, self.seriesTitle);
